@@ -1,1 +1,803 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spectrum Guide — Find a Specialist</title>
+  <meta name="robots" content="noindex,nofollow" />
+
+  <style>
+    :root{
+      /* Spectrum Guide-ish palette (tweak as you like) */
+      --ink:#2B273F;
+      --coral:#D24A5D;
+      --teal:#7CACA9;
+      --gold:#E8BE56;
+      --cream:#F5E19D;
+
+      --bg:#ffffff;
+      --muted:#5A5670;
+      --border:rgba(0,0,0,.12);
+      --chip:#f3f3f7;
+      --shadow:0 6px 18px rgba(0,0,0,.06);
+      --radius:16px;
+      --radius-sm:12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.35;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 14px 32px;
+    }
+
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+
+    h1{
+      font-size:22px;
+      margin:0;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .panel{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:14px;
+      margin-bottom:14px;
+    }
+
+    .controls{
+      display:grid;
+      gap:12px;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr auto auto;
+      align-items:end;
+    }
+
+    @media (max-width: 980px){
+      .controls{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+    @media (max-width: 640px){
+      .controls{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input[type="search"], select, button{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--ink);
+      font-size:14px;
+      outline:none;
+    }
+    input[type="search"]:focus, select:focus, button:focus{
+      border-color: rgba(124,172,169,.9);
+      box-shadow: 0 0 0 3px rgba(124,172,169,.18);
+    }
+
+    button{
+      cursor:pointer;
+      width:auto;
+      white-space:nowrap;
+    }
+    .btn{
+      padding:10px 12px;
+    }
+    .btn-outline{
+      background:#fff;
+    }
+    .btn-accent{
+      background:var(--teal);
+      color:#fff;
+      border-color:rgba(0,0,0,.05);
+    }
+
+    /* Multi-select dropdown */
+    .multi{
+      position:relative;
+    }
+    .multi-trigger{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .multi-trigger .hint{
+      color:var(--muted);
+      font-size:13px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .multi-menu{
+      position:absolute;
+      z-index:50;
+      left:0;
+      right:0;
+      top: calc(100% + 6px);
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      padding:8px;
+      max-height:280px;
+      overflow:auto;
+      display:none;
+    }
+    .multi.open .multi-menu{ display:block; }
+
+    .multi-search{
+      width:100%;
+      margin-bottom:8px;
+    }
+    .opt{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 8px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .opt:hover{ background:#f6f6fa; }
+    .opt input{ width:auto; }
+    .opt span{
+      font-size:14px;
+      flex:1;
+    }
+    .multi-actions{
+      display:flex;
+      gap:8px;
+      padding-top:8px;
+      border-top:1px solid rgba(0,0,0,.07);
+      margin-top:8px;
+    }
+    .multi-actions button{
+      width:100%;
+      padding:9px 10px;
+      border-radius:10px;
+      font-size:13px;
+    }
+
+    /* Results */
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .name{
+      font-weight:800;
+      font-size:17px;
+      margin:0;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 9px;
+      border-radius:999px;
+      background:var(--chip);
+      font-size:12px;
+      color:var(--ink);
+      border:1px solid rgba(0,0,0,.06);
+    }
+
+    .line{
+      font-size:13px;
+      color:var(--muted);
+    }
+    .line strong{
+      color:var(--ink);
+      font-weight:700;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:4px;
+    }
+    .a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      text-decoration:none;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:9px 10px;
+      font-size:13px;
+      color:var(--ink);
+      background:#fff;
+    }
+    .a.primary{
+      background:var(--coral);
+      color:#fff;
+      border-color:rgba(0,0,0,.05);
+    }
+
+    .hidden{ display:none !important; }
+    .status{
+      margin:10px 0 0;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .error{
+      color:#b00020;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Find a Specialist</h1>
+        <p class="sub">Search or filter by specialty, city, province, and teleconsultation.</p>
+      </div>
+    </header>
+
+    <div class="panel">
+      <div class="controls">
+        <div>
+          <label for="q">Search</label>
+          <input id="q" type="search" placeholder="Name, city, specialty…" />
+        </div>
+
+        <div class="multi" id="specMulti">
+          <label>Specialty (multi-select)</label>
+          <div class="multi-trigger" id="specTrigger" role="button" aria-haspopup="listbox" aria-expanded="false" tabindex="0">
+            <div class="hint" id="specHint">All specialties</div>
+            <div aria-hidden="true">▾</div>
+          </div>
+          <div class="multi-menu" id="specMenu">
+            <input class="multi-search" id="specSearch" type="search" placeholder="Filter specialties…" />
+            <div id="specOptions"></div>
+            <div class="multi-actions">
+              <button type="button" id="specAll" class="btn-outline">Select all</button>
+              <button type="button" id="specNone" class="btn-outline">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label for="city">City</label>
+          <select id="city"></select>
+        </div>
+
+        <div>
+          <label for="prov">Province</label>
+          <select id="prov"></select>
+        </div>
+
+        <div>
+          <label for="tele">Teleconsultation</label>
+          <select id="tele"></select>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button id="clear" class="btn btn-outline" type="button">Clear</button>
+          <button id="sort" class="btn btn-accent" type="button">Sort A–Z</button>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div id="count">0 results</div>
+        <div id="loading" class="status">Loading…</div>
+      </div>
+    </div>
+
+    <div id="cards" class="grid"></div>
+    <div id="msg" class="status"></div>
+  </div>
+
+  <script>
+    /***********************
+     * CONFIG
+     ***********************/
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQa6wHBak7GEWktggas45fIl9UfbOIl56GhzBkvZT6xSYWTm5e5oGTDnSMcChAKkw/pub?gid=1172647374&single=true&output=csv";
+
+    // Column headers expected (case-insensitive):
+    // Name, Specialty, Address, City, Province, Phone, Office Schedule, Teleconsultation, Email, Website
+
+    const MISSING = new Set(["", "n/a", "na", "-", "none"]);
+
+    /***********************
+     * UTIL
+     ***********************/
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+    const norm = (v) => (v ?? "").toString().trim();
+    const isMissing = (v) => MISSING.has(norm(v).toLowerCase());
+
+    function escapeHtml(str){
+      return (str ?? "").toString().replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      })[m]);
+    }
+
+    // Basic CSV parser that handles quotes
+    function parseCSV(text){
+      const rows = [];
+      let i = 0, field = "", row = [], inQuotes = false;
+
+      while (i < text.length){
+        const c = text[i];
+
+        if (c === '"'){
+          if (inQuotes && text[i+1] === '"'){ field += '"'; i += 2; continue; }
+          inQuotes = !inQuotes; i++; continue;
+        }
+
+        if (!inQuotes && (c === "," || c === "\n" || c === "\r")){
+          if (c === "\r" && text[i+1] === "\n") i++;
+          row.push(field);
+          field = "";
+          if (c === "\n" || c === "\r"){ rows.push(row); row = []; }
+          i++; continue;
+        }
+
+        field += c;
+        i++;
+      }
+      row.push(field);
+      rows.push(row);
+      return rows.filter(r => r.length && r.some(x => norm(x) !== ""));
+    }
+
+    function uniqSorted(arr){
+      return [...new Set(arr)]
+        .filter(v => !isMissing(v))
+        .sort((a,b) => a.localeCompare(b, undefined, { sensitivity:"base" }));
+    }
+
+    function toTel(phone){
+      const p = norm(phone);
+      if (isMissing(p)) return "";
+      const digits = p.replace(/[^\d+]/g, "");
+      return digits ? "tel:" + digits : "";
+    }
+
+    function safeUrl(u){
+      const url = norm(u);
+      if (isMissing(url)) return "";
+      if (/^(https?:\/\/)/i.test(url)) return url;
+      // allow bare domains
+      return "https://" + url;
+    }
+
+    function splitSpecialties(s){
+      const raw = norm(s);
+      if (isMissing(raw)) return [];
+      const parts = raw.includes(";") ? raw.split(";") : raw.split(",");
+      return parts.map(x => norm(x)).filter(x => !isMissing(x));
+    }
+
+    /***********************
+     * STATE
+     ***********************/
+    let ALL = [];       // all records
+    let VIEW = [];      // filtered/sorted
+    let sortAsc = true;
+
+    // filters
+    let selectedSpecialties = new Set();
+    let selectedCity = "";
+    let selectedProv = "";
+    let selectedTele = "";
+    let query = "";
+
+    /***********************
+     * DOM
+     ***********************/
+    const elCards = $("#cards");
+    const elCount = $("#count");
+    const elMsg = $("#msg");
+    const elLoading = $("#loading");
+
+    const elQ = $("#q");
+    const elCity = $("#city");
+    const elProv = $("#prov");
+    const elTele = $("#tele");
+    const elClear = $("#clear");
+    const elSort = $("#sort");
+
+    // Specialty multi-select
+    const multi = $("#specMulti");
+    const trig = $("#specTrigger");
+    const menu = $("#specMenu");
+    const specHint = $("#specHint");
+    const specOptions = $("#specOptions");
+    const specSearch = $("#specSearch");
+    const specAll = $("#specAll");
+    const specNone = $("#specNone");
+
+    /***********************
+     * RENDERING
+     ***********************/
+    function renderSelect(el, values, allLabel){
+      el.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = allLabel;
+      el.appendChild(opt0);
+      values.forEach(v => {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = v;
+        el.appendChild(o);
+      });
+    }
+
+    function renderSpecialtyOptions(options){
+      specOptions.innerHTML = "";
+      options.forEach(opt => {
+        const id = "sp_" + opt.toLowerCase().replace(/[^a-z0-9]+/g,"_");
+        const row = document.createElement("div");
+        row.className = "opt";
+        row.innerHTML = `
+          <input type="checkbox" id="${id}" value="${escapeHtml(opt)}">
+          <span>${escapeHtml(opt)}</span>
+        `;
+        row.addEventListener("click", (e) => {
+          // allow checkbox clicks + row clicks
+          if (e.target.tagName !== "INPUT") row.querySelector("input").click();
+        });
+        row.querySelector("input").addEventListener("change", (e) => {
+          const val = e.target.value;
+          if (e.target.checked) selectedSpecialties.add(val);
+          else selectedSpecialties.delete(val);
+          updateSpecHint();
+          apply();
+        });
+        specOptions.appendChild(row);
+      });
+      updateSpecHint();
+    }
+
+    function updateSpecHint(){
+      const n = selectedSpecialties.size;
+      if (n === 0) specHint.textContent = "All specialties";
+      else if (n === 1) specHint.textContent = [...selectedSpecialties][0];
+      else specHint.textContent = `${n} specialties selected`;
+    }
+
+    function renderCards(items){
+      elCards.innerHTML = items.map(r => {
+        const chips = splitSpecialties(r.specialty).slice(0,6).map(s => `<span class="chip">${escapeHtml(s)}</span>`).join("");
+        const more = splitSpecialties(r.specialty).length > 6 ? `<span class="chip">+${splitSpecialties(r.specialty).length - 6} more</span>` : "";
+
+        const place = [r.city, r.province].filter(v => !isMissing(v)).join(", ");
+        const tel = toTel(r.phone);
+        const web = safeUrl(r.website);
+
+        const phoneLine = (!isMissing(r.phone) && tel)
+          ? `<div class="line"><strong>Phone:</strong> <a href="${tel}" style="color:inherit; text-decoration:none;">${escapeHtml(r.phone)}</a></div>`
+          : "";
+
+        const addrLine = (!isMissing(r.address))
+          ? `<div class="line"><strong>Address:</strong> ${escapeHtml(r.address)}</div>`
+          : "";
+
+        const schedLine = (!isMissing(r.schedule))
+          ? `<div class="line"><strong>Office:</strong> ${escapeHtml(r.schedule)}</div>`
+          : "";
+
+        const teleLine = (!isMissing(r.tele))
+          ? `<div class="line"><strong>Teleconsultation:</strong> ${escapeHtml(r.tele)}</div>`
+          : "";
+
+        const placeLine = place
+          ? `<div class="line"><strong>Location:</strong> ${escapeHtml(place)}</div>`
+          : "";
+
+        const actions = `
+          <div class="actions">
+            ${web ? `<a class="a primary" href="${web}" target="_blank" rel="noopener">Website</a>` : ""}
+          </div>
+        `;
+
+        return `
+          <article class="card">
+            <h3 class="name">${escapeHtml(r.name)}</h3>
+            <div class="chips">${chips}${more}</div>
+            ${placeLine}
+            ${teleLine}
+            ${phoneLine}
+            ${addrLine}
+            ${schedLine}
+            ${actions}
+          </article>
+        `;
+      }).join("");
+
+      elCount.textContent = `${items.length} result${items.length === 1 ? "" : "s"}`;
+      elMsg.textContent = items.length ? "" : "No results. Try clearing filters or changing your search.";
+    }
+
+    /***********************
+     * FILTER / SORT
+     ***********************/
+    function matchesQuery(r){
+      if (!query) return true;
+      const q = query.toLowerCase();
+      const hay = [
+        r.name, r.specialty, r.address, r.city, r.province,
+        r.phone, r.schedule, r.tele, r.website
+      ].map(x => norm(x).toLowerCase()).join(" | ");
+      return hay.includes(q);
+    }
+
+    function matchesSpecialty(r){
+      if (selectedSpecialties.size === 0) return true;
+      const specs = splitSpecialties(r.specialty).map(s => s.toLowerCase());
+      // match if ANY selected specialty is contained in any specialty string
+      for (const s of selectedSpecialties){
+        const needle = s.toLowerCase();
+        if (specs.some(x => x.includes(needle))) return true;
+      }
+      return false;
+    }
+
+    function apply(){
+      VIEW = ALL.filter(r => {
+        if (selectedCity && norm(r.city) !== selectedCity) return false;
+        if (selectedProv && norm(r.province) !== selectedProv) return false;
+        if (selectedTele && norm(r.tele) !== selectedTele) return false;
+        if (!matchesSpecialty(r)) return false;
+        if (!matchesQuery(r)) return false;
+        return true;
+      });
+
+      VIEW.sort((a,b) => {
+        const A = norm(a.name).toLowerCase();
+        const B = norm(b.name).toLowerCase();
+        return sortAsc ? A.localeCompare(B) : B.localeCompare(A);
+      });
+
+      renderCards(VIEW);
+    }
+
+    /***********************
+     * MULTI-SELECT UI
+     ***********************/
+    function openMulti(){
+      multi.classList.add("open");
+      trig.setAttribute("aria-expanded","true");
+      specSearch.value = "";
+      filterSpecOptionList("");
+      setTimeout(() => specSearch.focus(), 0);
+    }
+    function closeMulti(){
+      multi.classList.remove("open");
+      trig.setAttribute("aria-expanded","false");
+    }
+    function toggleMulti(){
+      multi.classList.contains("open") ? closeMulti() : openMulti();
+    }
+
+    function filterSpecOptionList(q){
+      const qq = norm(q).toLowerCase();
+      $$("#specOptions .opt").forEach(row => {
+        const label = row.querySelector("span")?.textContent?.toLowerCase() || "";
+        row.classList.toggle("hidden", qq && !label.includes(qq));
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!multi.contains(e.target)) closeMulti();
+    });
+    trig.addEventListener("click", toggleMulti);
+    trig.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleMulti(); }
+      if (e.key === "Escape") closeMulti();
+    });
+    specSearch.addEventListener("input", (e) => filterSpecOptionList(e.target.value));
+
+    specAll.addEventListener("click", () => {
+      // select all visible options
+      $$("#specOptions .opt").forEach(row => {
+        if (row.classList.contains("hidden")) return;
+        const cb = row.querySelector("input");
+        cb.checked = true;
+        selectedSpecialties.add(cb.value);
+      });
+      updateSpecHint();
+      apply();
+    });
+    specNone.addEventListener("click", () => {
+      selectedSpecialties.clear();
+      $$("#specOptions input[type=checkbox]").forEach(cb => cb.checked = false);
+      updateSpecHint();
+      apply();
+    });
+
+    /***********************
+     * EVENTS
+     ***********************/
+    elQ.addEventListener("input", (e) => {
+      query = norm(e.target.value);
+      apply();
+    });
+
+    elCity.addEventListener("change", (e) => {
+      selectedCity = e.target.value;
+      apply();
+    });
+    elProv.addEventListener("change", (e) => {
+      selectedProv = e.target.value;
+      apply();
+    });
+    elTele.addEventListener("change", (e) => {
+      selectedTele = e.target.value;
+      apply();
+    });
+
+    elSort.addEventListener("click", () => {
+      sortAsc = !sortAsc;
+      elSort.textContent = sortAsc ? "Sort A–Z" : "Sort Z–A";
+      apply();
+    });
+
+    elClear.addEventListener("click", () => {
+      query = "";
+      selectedCity = "";
+      selectedProv = "";
+      selectedTele = "";
+      selectedSpecialties.clear();
+
+      elQ.value = "";
+      elCity.value = "";
+      elProv.value = "";
+      elTele.value = "";
+      $$("#specOptions input[type=checkbox]").forEach(cb => cb.checked = false);
+
+      updateSpecHint();
+      apply();
+    });
+
+    /***********************
+     * LOAD DATA
+     ***********************/
+    async function load(){
+      try{
+        elLoading.textContent = "Loading…";
+        elMsg.textContent = "";
+
+        const res = await fetch(CSV_URL, { cache:"no-store" });
+        if (!res.ok) throw new Error("Could not fetch CSV. Check your published link.");
+
+        const text = await res.text();
+        const rows = parseCSV(text);
+        if (rows.length < 2) throw new Error("CSV looks empty.");
+
+        const headers = rows[0].map(h => norm(h).toLowerCase());
+        const idx = (name) => headers.indexOf(name.toLowerCase());
+
+        const col = {
+          name: idx("name"),
+          specialty: idx("specialty"),
+          address: idx("address"),
+          city: idx("city"),
+          province: idx("province"),
+          phone: idx("phone"),
+          schedule: idx("office schedule"),
+          tele: idx("teleconsultation"),
+          email: idx("email"),
+          website: idx("website"),
+        };
+
+        // Build records
+        const data = rows.slice(1).map(r => ({
+          name: norm(r[col.name]),
+          specialty: norm(r[col.specialty]),
+          address: norm(r[col.address]),
+          city: norm(r[col.city]),
+          province: norm(r[col.province]),
+          phone: norm(r[col.phone]),
+          schedule: norm(r[col.schedule]),
+          tele: norm(r[col.tele]),
+          email: norm(r[col.email]),
+          website: norm(r[col.website]),
+        })).filter(r => !isMissing(r.name));
+
+        ALL = data;
+
+        // Build filter lists
+        const cities = uniqSorted(ALL.map(r => r.city));
+        const provs  = uniqSorted(ALL.map(r => r.province));
+        const teles  = uniqSorted(ALL.map(r => r.tele));
+
+        // Specialty options: collect distinct specialties from split list
+        const specs = uniqSorted(ALL.flatMap(r => splitSpecialties(r.specialty)));
+
+        renderSelect(elCity, cities, "All cities");
+        renderSelect(elProv, provs, "All provinces");
+        renderSelect(elTele, teles, "All");
+
+        renderSpecialtyOptions(specs);
+
+        // Initial render
+        sortAsc = true;
+        elSort.textContent = "Sort A–Z";
+        apply();
+
+        elLoading.textContent = "";
+      } catch(err){
+        console.error(err);
+        elLoading.textContent = "";
+        elMsg.textContent = "Error: " + (err?.message || "Could not load directory.");
+        elMsg.classList.add("error");
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
