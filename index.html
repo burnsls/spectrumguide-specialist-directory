@@ -609,7 +609,8 @@
       VIEW = ALL.filter(r => {
         if (selectedCity && norm(r.city) !== selectedCity) return false;
         if (selectedProv && norm(r.province) !== selectedProv) return false;
-        if (selectedTele && norm(r.tele) !== selectedTele) return false;
+        if (selectedTele === "Yes" && isMissing(r.tele)) return false;
+        if (selectedTele === "No" && !isMissing(r.tele)) return false;
         if (!matchesSpecialty(r)) return false;
         if (!matchesQuery(r)) return false;
         return true;
@@ -772,14 +773,13 @@
         // Build filter lists
         const cities = uniqSorted(ALL.map(r => r.city));
         const provs  = uniqSorted(ALL.map(r => r.province));
-        const teles  = uniqSorted(ALL.map(r => r.tele));
 
         // Specialty options: collect distinct specialties from split list
         const specs = uniqSorted(ALL.flatMap(r => splitSpecialties(r.specialty)));
 
         renderSelect(elCity, cities, "All cities");
         renderSelect(elProv, provs, "All provinces");
-        renderSelect(elTele, teles, "All");
+        renderSelect(elTele, ["Yes", "No"], "All");
 
         renderSpecialtyOptions(specs);
 
