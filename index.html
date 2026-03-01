@@ -546,6 +546,10 @@
           ? `<div class="line"><strong>Phone:</strong> <a href="${tel}" style="color:inherit; text-decoration:none;">${escapeHtml(r.phone)}</a></div>`
           : "";
 
+        const emailLine = (!isMissing(r.email))
+          ? `<div class="line"><strong>Email:</strong> <a href="mailto:${escapeHtml(r.email)}" style="color:inherit; text-decoration:none;">${escapeHtml(r.email)}</a></div>`
+          : "";
+
         const addrLine = (!isMissing(r.address))
           ? `<div class="line"><strong>Address:</strong> ${escapeHtml(r.address)}</div>`
           : "";
@@ -575,6 +579,7 @@
             ${placeLine}
             ${teleLine}
             ${phoneLine}
+            ${emailLine}
             ${addrLine}
             ${schedLine}
             ${actions}
@@ -594,7 +599,7 @@
       const q = query.toLowerCase();
       const hay = [
         r.name, r.specialty, r.address, r.city, r.province,
-        r.phone, r.schedule, r.tele, r.website
+        r.phone, r.email, r.schedule, r.tele, r.website
       ].map(x => norm(x).toLowerCase()).join(" | ");
       return hay.includes(q);
     }
